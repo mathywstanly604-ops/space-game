@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>اهرب من النيازك 🚀</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at top, #312e81, #020617 70%);
+
+    font-family: Arial, sans-serif;
+    color: white;
+
+    overflow-x: hidden;
+}
+
+.game-container {
+    width: 850px;
+    max-width: 95vw;
+    text-align: center;
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    text-shadow: 0 0 15px #38bdf8;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 0 10px;
+    margin-bottom: 10px;
+
+    font-size: 19px;
+    font-weight: bold;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+
+    border: 4px solid #94a3b8;
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 25px rgba(56,189,248,.35),
+        0 0 60px rgba(139,92,246,.15);
+}
+
+/* =====================================
+   الأزرار العادية
+===================================== */
+
+button {
+    border: none;
+    border-radius: 14px;
+
+    padding: 13px 28px;
+
+    background: #22c55e;
+    color: white;
+
+    font-size: 19px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 0 #15803d;
+
+    margin: 7px;
+}
+
+button:hover {
+    background: #16a34a;
+}
+
+button:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #15803d;
+}
+
+.menu {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.menu button {
+    min-width: 190px;
+}
+
+.shop {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 20px;
+
+    background: rgba(15,23,42,.95);
+
+    border: 2px solid #38bdf8;
+    border-radius: 18px;
+
+    box-shadow: 0 0 30px rgba(56,189,248,.2);
+}
+
+.shop h2 {
+    margin-top: 0;
+    color: #38bdf8;
+}
+
+.shopCoins {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.shop-item {
+    background: #1e293b;
+
+    border-radius: 14px;
+
+    padding: 13px;
+    margin: 10px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.shop-item button {
+    margin: 0;
+    padding: 9px 15px;
+    font-size: 16px;
+}
+
+.controls {
+    margin-top: 10px;
+    color: #cbd5e1;
+    font-size: 15px;
+}
+
+/* =====================================
+   أزرار الموبايل
+   مخفية تمامًا على الكمبيوتر
+===================================== */
+
+.mobile-controls {
+    display: none;
+}
+
+/* =====================================
+   الموبايل فقط
+===================================== */
+
+@media (max-width: 700px) {
+
+    body {
+        align-items: flex-start;
+        padding-top: 15px;
+    }
+
+    .game-container {
+        width: 96vw;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .info {
+        font-size: 14px;
+    }
+
+    canvas {
+        border-width: 3px;
+        border-radius: 12px;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    .mobile-controls {
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        gap: 30px;
+
+        margin-top: 12px;
+    }
+
+    .mobile-controls button {
+        width: 100px;
+        height: 65px;
+
+        margin: 0;
+
+        padding: 0;
+
+        font-size: 32px;
+
+        background: #334155;
+
+        border: 2px solid #38bdf8;
+
+        box-shadow:
+            0 5px 0 #0f172a,
+            0 0 15px rgba(56,189,248,.25);
+
+        touch-action: none;
+
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .mobile-controls button:active {
+        transform: translateY(4px);
+        box-shadow: 0 1px 0 #0f172a;
+        background: #475569;
+    }
+
+    .shop {
+        padding: 12px;
+    }
+
+    .shop-item {
+        font-size: 14px;
+    }
+
+    .shop-item button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <h1>🚀 اهرب من النيازك!</h1>
+
+    <!-- معلومات اللعبة -->
+
+    <div class="info">
+
+        <div>
+            ⭐ النقاط:
+            <span id="score">0</span>
+        </div>
+
+        <div>
+            🪙 العملات:
+            <span id="coins">0</span>
+        </div>
+
+        <div>
+            🏆 الأفضل:
+            <span id="highScore">0</span>
+        </div>
+
+    </div>
+
+
+    <!-- اللعبة -->
+
+    <canvas
+        id="game"
+        width="800"
+        height="500">
+    </canvas>
+
+
+    <!-- أزرار الكمبيوتر / القائمة -->
+
+    <div class="menu">
+
+        <button id="startButton">
+            🚀 ابدأ اللعبة
+        </button>
+
+        <button id="shopButton">
+            🛒 المتجر
+        </button>
+
+        <button id="soundButton">
+            🔊 الصوت: تشغيل
+        </button>
+
+    </div>
+
+
+    <!-- المتجر -->
+
+    <div class="shop" id="shop">
+
+        <h2>🛒 متجر الفضاء</h2>
+
+        <div class="shopCoins">
+            🪙 رصيدك:
+            <span id="shopCoins">0</span>
+        </div>
+
+
+        <div class="shop-item">
+
+            <div>
+                ⚡ سرعة اللاعب
+                <br>
+                <small>السعر: 20 🪙</small>
+            </div>
+
+            <button id="speedButton">
+                شراء
+            </button>
+
+        </div>
+
+
+        <div class="shop-item">
+
+            <div>
+                ❤️ حياة إضافية
+                <br>
+                <small>السعر: 30 🪙</small>
+            </div>
+
+            <button id="lifeButton">
+                شراء
+            </button>
+
+        </div>
+
+
+        <div class="shop-item">
+
+            <div>
+                🛡️ درع
+                <br>
+                <small>السعر: 40 🪙</small>
+            </div>
+
+            <button id="shieldButton">
+                شراء
+            </button>
+
+        </div>
+
+
+        <div class="shop-item">
+
+            <div>
+                👨‍🚀 بدلة فضاء جديدة
+                <br>
+                <small>السعر: 50 🪙</small>
+            </div>
+
+            <button id="skinButton">
+                شراء
+            </button>
+
+        </div>
+
+
+        <button id="closeShop">
+            ❌ إغلاق المتجر
+        </button>
+
+    </div>
+
+
+    <!-- تعليمات الكمبيوتر -->
+
+    <div class="controls">
+        ⬅️ ➡️ أو A / D للتحرك على الكمبيوتر
+    </div>
+
+
+    <!-- =================================
+         أزرار الموبايل
+         لا تظهر على الكمبيوتر
+    ================================== -->
+
+    <div class="mobile-controls">
+
+        <button id="leftButton">
+            ⬅️
+        </button>
+
+        <button id="rightButton">
+            ➡️
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================
+   عناصر الصفحة
+===================================== */
+
+const canvas =
+    document.getElementById("game");
+
+const ctx =
+    canvas.getContext("2d");
+
+const scoreElement =
+    document.getElementById("score");
+
+const coinsElement =
+    document.getElementById("coins");
+
+const highScoreElement =
+    document.getElementById("highScore");
+
+const startButton =
+    document.getElementById("startButton");
+
+const shopButton =
+    document.getElementById("shopButton");
+
+const soundButton =
+    document.getElementById("soundButton");
+
+const shop =
+    document.getElementById("shop");
+
+const shopCoins =
+    document.getElementById("shopCoins");
+
+const closeShop =
+    document.getElementById("closeShop");
+
+const speedButton =
+    document.getElementById("speedButton");
+
+const lifeButton =
+    document.getElementById("lifeButton");
+
+const shieldButton =
+    document.getElementById("shieldButton");
+
+const skinButton =
+    document.getElementById("skinButton");
+
+const leftButton =
+    document.getElementById("leftButton");
+
+const rightButton =
+    document.getElementById("rightButton");
+
+
+
+/* =====================================
+   نظام الأصوات 🎵
+   الأصوات مولدة داخل المتصفح، فلا تحتاج ملفات صوت خارجية
+===================================== */
+
+let audioContext = null;
+let musicTimer = null;
+let musicOn = true;
+
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+}
+
+function tone(freq, duration, type = "sine", volume = 0.06, delay = 0) {
+    if (!musicOn || !audioContext) return;
+
+    const now = audioContext.currentTime + delay;
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.03);
+}
+
+function playSound(name) {
+    initAudio();
+
+    if (name === "start") {
+        tone(440, .10, "square", .05);
+        tone(660, .12, "square", .05, .11);
+        tone(880, .18, "square", .045, .24);
+    }
+
+    if (name === "explosion") {
+        tone(90, .28, "sawtooth", .09);
+        tone(55, .35, "square", .05, .04);
+    }
+
+    if (name === "shield") {
+        tone(500, .10, "sine", .05);
+        tone(750, .12, "sine", .05, .08);
+        tone(1050, .18, "sine", .04, .18);
+    }
+
+    if (name === "coin") {
+        tone(900, .07, "square", .045);
+        tone(1300, .12, "square", .04, .07);
+    }
+
+    if (name === "buy") {
+        tone(500, .08, "triangle", .045);
+        tone(700, .08, "triangle", .045, .09);
+        tone(950, .15, "triangle", .04, .18);
+    }
+
+    if (name === "error") {
+        tone(180, .16, "square", .05);
+        tone(130, .20, "square", .04, .12);
+    }
+
+    if (name === "gameover") {
+        tone(500, .15, "sawtooth", .05);
+        tone(350, .18, "sawtooth", .05, .16);
+        tone(220, .35, "sawtooth", .05, .35);
+    }
+
+    if (name === "highscore") {
+        tone(660, .10, "triangle", .05);
+        tone(880, .10, "triangle", .05, .10);
+        tone(1100, .14, "triangle", .05, .20);
+        tone(1320, .25, "triangle", .04, .34);
+    }
+}
+
+function startMusic() {
+    if (!musicOn || musicTimer) return;
+    initAudio();
+
+    // موسيقى خلفية فضائية أوضح وأعلى، لكن هادئة حتى لا تغطي المؤثرات
+    const melody = [
+        220, 277, 330, 370,
+        330, 277, 247, 330,
+        220, 277, 330, 440,
+        370, 330, 277, 247
+    ];
+
+    const bass = [
+        110, 110, 123, 123,
+        98, 98, 110, 110
+    ];
+
+    let step = 0;
+
+    musicTimer = setInterval(() => {
+        if (!gameRunning || !musicOn) return;
+
+        const note = melody[step % melody.length];
+        const bassNote = bass[Math.floor(step / 2) % bass.length];
+
+        // اللحن الرئيسي
+        tone(note, .30, "sine", .028);
+
+        // نغمة باس خفيفة كل ضربتين
+        if (step % 2 === 0) {
+            tone(bassNote, .42, "triangle", .018);
+        }
+
+        // نغمة فضائية خفيفة في نهاية كل جملة
+        if (step % 8 === 7) {
+            tone(note * 2, .16, "sine", .012, .04);
+        }
+
+        step++;
+    }, 360);
+}
+
+function stopMusic() {
+    if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+    }
+}
+
+/* =====================================
+   بيانات اللاعب
+===================================== */
+
+const player = {
+
+    x: 375,
+    y: 420,
+
+    width: 50,
+    height: 60,
+
+    speed: 7
+
+};
+
+
+/* =====================================
+   التحكم
+===================================== */
+
+const keys = {
+
+    left: false,
+    right: false
+
+};
+
+
+/* =====================================
+   متغيرات اللعبة
+===================================== */
+
+let meteors = [];
+
+let stars = [];
+
+let particles = [];
+
+let score = 0;
+
+let coins =
+    Number(localStorage.getItem("spaceCoins")) || 0;
+
+let highScore =
+    Number(localStorage.getItem("spaceHighScore")) || 0;
+
+let extraLives =
+    Number(localStorage.getItem("spaceLives")) || 0;
+
+let shields =
+    Number(localStorage.getItem("spaceShields")) || 0;
+
+let speedLevel =
+    Number(localStorage.getItem("spaceSpeed")) || 0;
+
+let skinOwned =
+    localStorage.getItem("spaceSkin") === "true";
+
+let gameRunning = false;
+
+let gameOver = false;
+
+let spawnTimer = 0;
+
+let meteorSpeed = 3;
+
+let animationId;
+
+let messageTimer = 0;
+
+
+/* =====================================
+   تحديث المعلومات
+===================================== */
+
+function updateInfo() {
+
+    coinsElement.textContent = coins;
+
+    shopCoins.textContent = coins;
+
+    highScoreElement.textContent = highScore;
+
+}
+
+
+/* =====================================
+   حفظ البيانات
+===================================== */
+
+function saveData() {
+
+    localStorage.setItem(
+        "spaceCoins",
+        coins
+    );
+
+    localStorage.setItem(
+        "spaceHighScore",
+        highScore
+    );
+
+    localStorage.setItem(
+        "spaceLives",
+        extraLives
+    );
+
+    localStorage.setItem(
+        "spaceShields",
+        shields
+    );
+
+    localStorage.setItem(
+        "spaceSpeed",
+        speedLevel
+    );
+
+    localStorage.setItem(
+        "spaceSkin",
+        skinOwned
+    );
+
+}
+
+
+/* =====================================
+   النجوم
+===================================== */
+
+for (let i = 0; i < 100; i++) {
+
+    stars.push({
+
+        x:
+            Math.random() *
+            canvas.width,
+
+        y:
+            Math.random() *
+            canvas.height,
+
+        size:
+            Math.random() * 2 + 1,
+
+        speed:
+            Math.random() * 0.5 + 0.2
+
+    });
+
+}
+
+
+/* =====================================
+   كيبورد الكمبيوتر
+===================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const key =
+            event.key.toLowerCase();
+
+        if (
+            event.key === "ArrowLeft" ||
+            key === "a"
+        ) {
+
+            keys.left = true;
+
+            event.preventDefault();
+
+        }
+
+        if (
+            event.key === "ArrowRight" ||
+            key === "d"
+        ) {
+
+            keys.right = true;
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    function(event) {
+
+        const key =
+            event.key.toLowerCase();
+
+        if (
+            event.key === "ArrowLeft" ||
+            key === "a"
+        ) {
+
+            keys.left = false;
+
+        }
+
+        if (
+            event.key === "ArrowRight" ||
+            key === "d"
+        ) {
+
+            keys.right = false;
+
+        }
+
+    }
+);
+
+
+/* =====================================
+   أزرار الموبايل
+===================================== */
+
+function mobileLeftStart(event) {
+
+    event.preventDefault();
+
+    keys.left = true;
+
+}
+
+
+function mobileLeftStop(event) {
+
+    event.preventDefault();
+
+    keys.left = false;
+
+}
+
+
+function mobileRightStart(event) {
+
+    event.preventDefault();
+
+    keys.right = true;
+
+}
+
+
+function mobileRightStop(event) {
+
+    event.preventDefault();
+
+    keys.right = false;
+
+}
+
+
+/* الزر الشمال */
+
+leftButton.addEventListener(
+    "pointerdown",
+    mobileLeftStart
+);
+
+leftButton.addEventListener(
+    "pointerup",
+    mobileLeftStop
+);
+
+leftButton.addEventListener(
+    "pointerleave",
+    mobileLeftStop
+);
+
+leftButton.addEventListener(
+    "pointercancel",
+    mobileLeftStop
+);
+
+
+/* الزر اليمين */
+
+rightButton.addEventListener(
+    "pointerdown",
+    mobileRightStart
+);
+
+rightButton.addEventListener(
+    "pointerup",
+    mobileRightStop
+);
+
+rightButton.addEventListener(
+    "pointerleave",
+    mobileRightStop
+);
+
+rightButton.addEventListener(
+    "pointercancel",
+    mobileRightStop
+);
+
+
+/* =====================================
+   إنشاء نيزك
+===================================== */
+
+function createMeteor() {
+
+    const size =
+        30 + Math.random() * 25;
+
+    meteors.push({
+
+        x:
+            Math.random() *
+            (canvas.width - size),
+
+        y:
+            -size,
+
+        width: size,
+
+        height: size,
+
+        speed:
+            meteorSpeed +
+            Math.random() * 2,
+
+        rotation:
+            Math.random() *
+            Math.PI * 2,
+
+        rotationSpeed:
+            (Math.random() - 0.5) *
+            0.08
+
+    });
+
+}
+
+
+/* =====================================
+   تحريك اللاعب
+===================================== */
+
+function updatePlayer() {
+
+    player.speed =
+        7 + speedLevel * 1.5;
+
+
+    if (keys.left) {
+
+        player.x -=
+            player.speed;
+
+    }
+
+
+    if (keys.right) {
+
+        player.x +=
+            player.speed;
+
+    }
+
+
+    if (player.x < 0) {
+
+        player.x = 0;
+
+    }
+
+
+    if (
+        player.x +
+        player.width >
+        canvas.width
+    ) {
+
+        player.x =
+            canvas.width -
+            player.width;
+
+    }
+
+}
+
+
+/* =====================================
+   تحريك النجوم
+===================================== */
+
+function updateStars() {
+
+    stars.forEach(function(star) {
+
+        star.y += star.speed;
+
+        if (
+            star.y >
+            canvas.height
+        ) {
+
+            star.y = 0;
+
+            star.x =
+                Math.random() *
+                canvas.width;
+
+        }
+
+    });
+
+}
+
+
+/* =====================================
+   تحريك النيازك
+===================================== */
+
+function updateMeteors() {
+
+    for (
+        let i = meteors.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const meteor =
+            meteors[i];
+
+        meteor.y +=
+            meteor.speed;
+
+        meteor.rotation +=
+            meteor.rotationSpeed;
+
+
+        if (
+            meteor.y >
+            canvas.height + 60
+        ) {
+
+            meteors.splice(i, 1);
+
+            score++;
+
+            scoreElement.textContent =
+                score;
+
+            continue;
+
+        }
+
+
+        if (
+            isColliding(
+                player,
+                meteor
+            )
+        ) {
+
+            /* الدرع يحمي اللاعب */
+
+            if (shields > 0) {
+
+                shields--;
+
+                saveData();
+
+                meteors.splice(i, 1);
+
+                createExplosion(
+                    player.x +
+                    player.width / 2,
+
+                    player.y +
+                    player.height / 2
+                );
+
+                showMessage(
+                    "🛡️ الدرع حماك!"
+                );
+
+                playSound("shield");
+
+                continue;
+
+            }
+
+
+            /* حياة إضافية */
+
+            if (extraLives > 0) {
+
+                extraLives--;
+
+                saveData();
+
+                meteors.splice(i, 1);
+
+                createExplosion(
+                    player.x +
+                    player.width / 2,
+
+                    player.y +
+                    player.height / 2
+                );
+
+                showMessage(
+                    "❤️ استخدمت حياة إضافية!"
+                );
+
+                continue;
+
+            }
+
+
+            createExplosion(
+                player.x +
+                player.width / 2,
+
+                player.y +
+                player.height / 2
+            );
+
+            endGame();
+
+            return;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   الاصطدام
+===================================== */
+
+function isColliding(a, b) {
+
+    return (
+
+        a.x <
+        b.x + b.width &&
+
+        a.x + a.width >
+        b.x &&
+
+        a.y <
+        b.y + b.height &&
+
+        a.y + a.height >
+        b.y
+
+    );
+
+}
+
+
+/* =====================================
+   الخلفية
+===================================== */
+
+function drawBackground() {
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            canvas.height
+        );
+
+    gradient.addColorStop(
+        0,
+        "#020617"
+    );
+
+    gradient.addColorStop(
+        1,
+        "#172554"
+    );
+
+    ctx.fillStyle =
+        gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    stars.forEach(function(star) {
+
+        ctx.fillStyle =
+            "rgba(255,255,255,.8)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    });
+
+}
+
+
+/* =====================================
+   رسم اللاعب
+===================================== */
+
+function drawPlayer() {
+
+    const x =
+        player.x;
+
+    const y =
+        player.y;
+
+
+    ctx.save();
+
+
+    /* الدرع */
+
+    if (shields > 0) {
+
+        ctx.strokeStyle =
+            "rgba(56,189,248,.8)";
+
+        ctx.lineWidth = 4;
+
+        ctx.shadowColor =
+            "#38bdf8";
+
+        ctx.shadowBlur = 20;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x + 25,
+            y + 30,
+            38,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    ctx.shadowColor =
+        skinOwned
+            ? "#a855f7"
+            : "#38bdf8";
+
+    ctx.shadowBlur = 18;
+
+
+    /* الجسم */
+
+    ctx.fillStyle =
+        skinOwned
+            ? "#c084fc"
+            : "#e2e8f0";
+
+    ctx.fillRect(
+        x + 8,
+        y + 25,
+        34,
+        30
+    );
+
+
+    /* الخوذة */
+
+    ctx.fillStyle =
+        skinOwned
+            ? "#e9d5ff"
+            : "#f8fafc";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x + 25,
+        y + 20,
+        19,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* الزجاج */
+
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle =
+        "#0f172a";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x + 25,
+        y + 20,
+        12,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* انعكاس */
+
+    ctx.fillStyle =
+        "#38bdf8";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x + 21,
+        y + 16,
+        4,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* الذراعين */
+
+    ctx.fillStyle =
+        skinOwned
+            ? "#a855f7"
+            : "#cbd5e1";
+
+    ctx.fillRect(
+        x,
+        y + 28,
+        9,
+        22
+    );
+
+    ctx.fillRect(
+        x + 41,
+        y + 28,
+        9,
+        22
+    );
+
+
+    /* الحزام */
+
+    ctx.fillStyle =
+        "#64748b";
+
+    ctx.fillRect(
+        x + 8,
+        y + 40,
+        34,
+        6
+    );
+
+
+    /* الرجلين */
+
+    ctx.fillStyle =
+        skinOwned
+            ? "#a855f7"
+            : "#cbd5e1";
+
+    ctx.fillRect(
+        x + 10,
+        y + 52,
+        12,
+        8
+    );
+
+    ctx.fillRect(
+        x + 28,
+        y + 52,
+        12,
+        8
+    );
+
+
+    ctx.restore();
+
+}
+
+
+/* =====================================
+   رسم النيازك
+===================================== */
+
+function drawMeteors() {
+
+    meteors.forEach(function(meteor) {
+
+        const centerX =
+            meteor.x +
+            meteor.width / 2;
+
+        const centerY =
+            meteor.y +
+            meteor.height / 2;
+
+
+        ctx.save();
+
+        ctx.translate(
+            centerX,
+            centerY
+        );
+
+        ctx.rotate(
+            meteor.rotation
+        );
+
+
+        ctx.shadowColor =
+            "#f97316";
+
+        ctx.shadowBlur = 15;
+
+
+        ctx.fillStyle =
+            "#92400e";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            -meteor.width / 2,
+            -meteor.height / 4
+        );
+
+        ctx.lineTo(
+            -meteor.width / 4,
+            -meteor.height / 2
+        );
+
+        ctx.lineTo(
+            meteor.width / 3,
+            -meteor.height / 2.5
+        );
+
+        ctx.lineTo(
+            meteor.width / 2,
+            meteor.height / 4
+        );
+
+        ctx.lineTo(
+            meteor.width / 5,
+            meteor.height / 2
+        );
+
+        ctx.lineTo(
+            -meteor.width / 3,
+            meteor.height / 2
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle =
+            "#f97316";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            0,
+            0,
+            meteor.width * .15,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        ctx.restore();
+
+    });
+
+}
+
+
+/* =====================================
+   الانفجار
+===================================== */
+
+function createExplosion(x, y) {
+
+    playSound("explosion");
+
+    for (let i = 0; i < 30; i++) {
+
+        particles.push({
+
+            x: x,
+            y: y,
+
+            size:
+                Math.random() * 6 + 2,
+
+            speedX:
+                (Math.random() - .5) * 8,
+
+            speedY:
+                (Math.random() - .5) * 8,
+
+            life: 40
+
+        });
+
+    }
+
+}
+
+
+function updateParticles() {
+
+    for (
+        let i = particles.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const p =
+            particles[i];
+
+        p.x += p.speedX;
+
+        p.y += p.speedY;
+
+        p.life--;
+
+        if (p.life <= 0) {
+
+            particles.splice(i, 1);
+
+        }
+
+    }
+
+}
+
+
+function drawParticles() {
+
+    particles.forEach(function(p) {
+
+        ctx.fillStyle =
+            "rgba(249,115,22," +
+            p.life / 40 +
+            ")";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    });
+
+}
+
+
+/* =====================================
+   الصعوبة
+===================================== */
+
+function increaseDifficulty() {
+
+    meteorSpeed =
+        3 +
+        Math.floor(score / 5) * .5;
+
+}
+
+
+/* =====================================
+   تحديث اللعبة
+===================================== */
+
+function update() {
+
+    updateStars();
+
+    updateParticles();
+
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    updatePlayer();
+
+    updateMeteors();
+
+
+    spawnTimer++;
+
+
+    const spawnDelay =
+        Math.max(
+            25,
+            70 - score
+        );
+
+
+    if (
+        spawnTimer >=
+        spawnDelay
+    ) {
+
+        createMeteor();
+
+        spawnTimer = 0;
+
+    }
+
+
+    increaseDifficulty();
+
+}
+
+
+/* =====================================
+   الرسم
+===================================== */
+
+function draw() {
+
+    drawBackground();
+
+    drawMeteors();
+
+    drawPlayer();
+
+    drawParticles();
+
+
+    if (
+        !gameRunning &&
+        !gameOver
+    ) {
+
+        drawMessage(
+            "🚀 اهرب من النيازك!",
+            "اضغط على ابدأ اللعبة"
+        );
+
+    }
+
+
+    if (gameOver) {
+
+        drawMessage(
+            "💥 Game Over",
+            "نتيجتك: " + score
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   رسالة داخل اللعبة
+===================================== */
+
+function drawMessage(
+    title,
+    subtitle
+) {
+
+    ctx.fillStyle =
+        "rgba(0,0,0,.65)";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.fillStyle =
+        "white";
+
+    ctx.font =
+        "bold 42px Arial";
+
+    ctx.fillText(
+        title,
+        canvas.width / 2,
+        220
+    );
+
+
+    ctx.font =
+        "24px Arial";
+
+    ctx.fillStyle =
+        "#cbd5e1";
+
+    ctx.fillText(
+        subtitle,
+        canvas.width / 2,
+        270
+    );
+
+
+    ctx.textAlign =
+        "left";
+
+}
+
+
+/* =====================================
+   رسالة مؤقتة
+===================================== */
+
+function showMessage(text) {
+
+    messageTimer = 100;
+
+    window.gameMessage =
+        text;
+
+}
+
+
+/* =====================================
+   نهاية اللعبة
+===================================== */
+
+function endGame() {
+
+    stopMusic();
+    playSound("gameover");
+
+    gameRunning = false;
+
+    gameOver = true;
+
+    keys.left = false;
+    keys.right = false;
+
+
+    if (score > highScore) {
+
+        highScore = score;
+
+        localStorage.setItem(
+            "spaceHighScore",
+            highScore
+        );
+
+    }
+
+
+    updateInfo();
+
+
+    startButton.textContent =
+        "🔄 العب مرة أخرى";
+
+}
+
+
+/* =====================================
+   بداية اللعبة
+===================================== */
+
+function startGame() {
+
+    initAudio();
+    playSound("start");
+    startMusic();
+
+    meteors = [];
+
+    particles = [];
+
+    score = 0;
+
+    spawnTimer = 0;
+
+    meteorSpeed = 3;
+
+    player.x = 375;
+
+    gameRunning = true;
+
+    gameOver = false;
+
+    startButton.textContent =
+        "🔄 إعادة اللعبة";
+
+
+    scoreElement.textContent =
+        score;
+
+
+    shop.style.display =
+        "none";
+
+}
+
+
+/* =====================================
+   المتجر
+===================================== */
+
+shopButton.addEventListener(
+    "click",
+    function() {
+
+        shop.style.display =
+            "block";
+
+    }
+);
+
+
+closeShop.addEventListener(
+    "click",
+    function() {
+
+        shop.style.display =
+            "none";
+
+    }
+);
+
+
+/* سرعة */
+
+speedButton.addEventListener(
+    "click",
+    function() {
+
+        if (speedLevel >= 5) {
+
+            playSound("error");
+            alert(
+                "⚡ وصلت لأقصى سرعة!"
+            );
+
+            return;
+
+        }
+
+
+        if (coins < 20) {
+
+            playSound("error");
+            alert(
+                "🪙 مش معاك عملات كفاية!"
+            );
+
+            return;
+
+        }
+
+
+        coins -= 20;
+
+        speedLevel++;
+
+        playSound("buy");
+        saveData();
+
+        updateInfo();
+
+    }
+);
+
+
+/* حياة */
+
+lifeButton.addEventListener(
+    "click",
+    function() {
+
+        if (coins < 30) {
+
+            alert(
+                "🪙 مش معاك عملات كفاية!"
+            );
+
+            return;
+
+        }
+
+
+        coins -= 30;
+
+        extraLives++;
+
+        playSound("buy");
+        saveData();
+
+        updateInfo();
+
+    }
+);
+
+
+/* درع */
+
+shieldButton.addEventListener(
+    "click",
+    function() {
+
+        if (coins < 40) {
+
+            alert(
+                "🪙 مش معاك عملات كفاية!"
+            );
+
+            return;
+
+        }
+
+
+        coins -= 40;
+
+        shields++;
+
+        playSound("buy");
+        saveData();
+
+        updateInfo();
+
+    }
+);
+
+
+/* البدلة */
+
+skinButton.addEventListener(
+    "click",
+    function() {
+
+        if (skinOwned) {
+
+            playSound("error");
+            alert(
+                "👨‍🚀 البدلة دي عندك بالفعل!"
+            );
+
+            return;
+
+        }
+
+
+        if (coins < 50) {
+
+            alert(
+                "🪙 مش معاك عملات كفاية!"
+            );
+
+            return;
+
+        }
+
+
+        coins -= 50;
+
+        skinOwned = true;
+
+        playSound("buy");
+        saveData();
+
+        updateInfo();
+
+        alert(
+            "🎉 مبروك! اشتريت البدلة الجديدة!"
+        );
+
+    }
+);
+
+
+
+/* =====================================
+   زر الصوت
+===================================== */
+
+soundButton.addEventListener("click", function() {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        soundButton.textContent = "🔊 الصوت: تشغيل";
+        if (gameRunning) startMusic();
+        initAudio();
+    } else {
+        soundButton.textContent = "🔇 الصوت: إيقاف";
+        stopMusic();
+    }
+});
+
+/* =====================================
+   زر البداية
+===================================== */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+/* =====================================
+   العملات
+   كل 5 ثواني أثناء اللعب
+===================================== */
+
+setInterval(
+    function() {
+
+        if (gameRunning) {
+
+            coins++;
+            playSound("coin");
+
+            saveData();
+
+            updateInfo();
+
+        }
+
+    },
+    5000
+);
+
+
+/* =====================================
+   اللعبة
+===================================== */
+
+function gameLoop() {
+
+    update();
+
+    draw();
+
+
+    if (messageTimer > 0) {
+
+        messageTimer--;
+
+    }
+
+
+    animationId =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* =====================================
+   تشغيل أول مرة
+===================================== */
+
+updateInfo();
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
